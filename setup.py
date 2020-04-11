@@ -3,7 +3,7 @@ from distutils.core import Extension, setup
 from distutils import sysconfig
 
 # Full paths to imlib2-config and freetype-config, adjust as needed -
-configs = ["/usr/bin/freetype-config", "/usr/bin/imlib2-config"]
+configs = ["/usr/X11/bin/freetype-config", "/usr/local/bin/imlib2-config"]
 
 # Adjust or add any additional include directories here -
 idirs   = ["/usr/X11R6/include"]
@@ -15,7 +15,7 @@ ldirs   = []
 cargs   = ["-Wall"]
 
 # Full path to libImlib2 shared library
-imlib2  = "/usr/lib/libImlib2.so.1"
+imlib2  = "/usr/local/lib/libImlib2.so.6.0"
 
 #------------------------------------------------------------------------------
 # The rest of this script should not need to be modified! 
@@ -30,8 +30,8 @@ install_dir = sysconfig.get_python_lib() + "/pypanel"
 try:
     from Xlib import X, display, Xatom, Xutil
 except:
-    print "\nPyPanel requires the Python X library -"
-    print "http://sourceforge.net/projects/python-xlib/"
+    print("\nPyPanel requires the Python X library -")
+    print("http://sourceforge.net/projects/python-xlib/")
     sys.exit()
    
 # Parse the build options
@@ -77,24 +77,24 @@ for config in configs:
             
     else:
         if package == "imlib2-config":
-            print "\nPyPanel requires the Imlib2 library -"
-            print "http://www.enlightenment.org/pages/imlib2.html"
+            print("\nPyPanel requires the Imlib2 library -")
+            print("http://www.enlightenment.org/pages/imlib2.html")
             sys.exit()
 
 # Fix the shebang and add the Imlib2 workaround if necessary
 if len(sys.argv) > 1 and sys.argv[1] != "sdist":
     for line in fileinput.input(["pypanel"], inplace=1):
         if fileinput.isfirstline():
-            print "#!%s -OO" % sys.executable
+            print("#!%s -OO" % sys.executable)
         else:
-            print line,  
+            print(line, end=' ')  
             
     if ("IMLIB2_FIX", 1) in defs:
         for line in fileinput.input(["ppmodule.c"], inplace=1):
             if "handle = dlopen" in line:
-                print '    handle = dlopen("%s", RTLD_NOW|RTLD_GLOBAL);' % imlib2
+                print('    handle = dlopen("%s", RTLD_NOW|RTLD_GLOBAL);' % imlib2)
             else:
-                print line,   
+                print(line, end=' ')   
                 
                    
 # Distutils config
@@ -110,7 +110,7 @@ module = Extension("ppmodule",
 
 setup(name             = "PyPanel",
       author           = "Jon Gelo",
-      author_email     = "jongelo@gmail.com",
+      author_email     = "ziljian@users.sourceforge.net",
       version          = "2.4",
       license          = "GPL",
       platforms        = "POSIX",

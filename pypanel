@@ -1,7 +1,7 @@
-#!/usr/bin/python -OO
+#!/usr/local/bin/python3 -OO
 """
 PyPanel v2.4 - Lightweight panel/taskbar for X11 window managers
-Copyright (c) 2003-2005 Jon Gelo (jongelo@gmail.com)
+Copyright (c) 2003-2005 Jon Gelo (ziljian@users.sourceforge.net)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -207,7 +207,7 @@ class PyPanel(object):
         win.change_property(dsp.intern_atom("_WIN_STATE"),Xatom.CARDINAL,32,[1]) 
         win.change_property(dsp.intern_atom("_MOTIF_WM_HINTS"),
             dsp.intern_atom("_MOTIF_WM_HINTS"), 32, [0x2, 0x0, 0x0, 0x0, 0x0])
-        win.change_property(self._DESKTOP, Xatom.CARDINAL, 32, [0xffffffffL])
+        win.change_property(self._DESKTOP, Xatom.CARDINAL, 32, [0xffffffff])
         win.change_property(dsp.intern_atom("_NET_WM_WINDOW_TYPE"),
             Xatom.ATOM, 32, [dsp.intern_atom("_NET_WM_WINDOW_TYPE_DOCK")])
               
@@ -281,7 +281,7 @@ class PyPanel(object):
         if not APPICONS:
             return
             
-        icon = Obj(path="", data="", width=0, height=0, pixmap=0L, mask=0L)
+        icon = Obj(path="", data="", width=0, height=0, pixmap=0, mask=0)
             
         for tc in task.tclass:
             if tc in ICON_LIST:
@@ -305,9 +305,9 @@ class PyPanel(object):
                 icon.width  = geom.width
                 icon.height = geom.height
                 
-                if icon.mask > sys.maxint:
+                if icon.mask > sys.maxsize:
                     icon.mask = 0
-                if icon.pixmap > sys.maxint:
+                if icon.pixmap > sys.maxsize:
                     raise
         except:
             # default icon
@@ -323,12 +323,12 @@ class PyPanel(object):
             return 0
             
         if launcher:
-            y = (P_HEIGHT-APPL_I_HEIGHT)/2
+            y = (P_HEIGHT-APPL_I_HEIGHT)//2
             w = APPL_I_WIDTH
             h = APPL_I_HEIGHT
             name = task.app
         else:
-            y = (P_HEIGHT-I_HEIGHT)/2
+            y = (P_HEIGHT-I_HEIGHT)//2
             w = I_WIDTH
             h = I_HEIGHT
             name = task.tclass
@@ -555,7 +555,7 @@ class PyPanel(object):
                     clockButtonEvent(self, e.detail)
                     return
             elif panel[section].id == "launcher" and e.detail == 1:
-                for a in panel[section].tasks.values():
+                for a in list(panel[section].tasks.values()):
                     if x > a.x1 and x < a.x2:
                         os.system(a.app)
                         return   
@@ -563,17 +563,17 @@ class PyPanel(object):
                 if not panel[TASKS].tasks:
                     try:
                         panelButtonEvent(self, e.detail)
-                    except NameError, e:
+                    except NameError as e:
                         sys.stderr.write("\n'panelButtonEvent()' is not defined in your pypanelrc.\n")
                         sys.stderr.write("A current pypanelrc example can be found here -\n")
                         sys.stderr.write("%s/pypanel/pypanelrc\n" % sysconfig.get_python_lib())
                 else:
                     cdt = self.getDesktop()
-                    for t in panel[TASKS].tasks.values():
+                    for t in list(panel[TASKS].tasks.values()):
                         if t.visible and x > t.x1 and x < t.x2:
                             cdt = self.getDesktop()
                             tdt = t.desk
-                            if SHOWALL and cdt != tdt and tdt != 0xffffffffL:
+                            if SHOWALL and cdt != tdt and tdt != 0xffffffff:
                                 if SHOWALL == 1:
                                     # Move task to current desktop
                                     self.sendEvent(t.obj, self._DESKTOP, [cdt])
@@ -633,7 +633,7 @@ class PyPanel(object):
         if TRAY and panel[TRAY].tasks:
             tray = panel[TRAY]
             space -= 2 
-            for t in panel[TRAY].tasks.values():
+            for t in list(panel[TRAY].tasks.values()):
                 if TRAY_I_WIDTH:
                     t.width = TRAY_I_WIDTH
                     space -= t.width
@@ -648,7 +648,7 @@ class PyPanel(object):
                 t = tasks[task]
                 t.visible = 0
                 if not t.hidden:
-                    if SHOWALL or (t.desk == cdt or t.desk == 0xffffffffL):
+                    if SHOWALL or (t.desk == cdt or t.desk == 0xffffffff):
                         t.visible = 1
                     if SHOWMINIMIZED and self._HIDDEN not in t.state:
                         t.visible = 0
@@ -704,7 +704,7 @@ class PyPanel(object):
                 for tid in tray.order:
                     t = tray.tasks[tid]
                     t.x = curr_x
-                    t.y = (P_HEIGHT-t.height)/2
+                    t.y = (P_HEIGHT-t.height)//2
                     t.obj.configure(onerror=self.error, x=curr_x, y=t.y, 
                          width=t.width, height=t.height)
                     t.obj.map(onerror=self.error)
@@ -862,7 +862,7 @@ class PyPanel(object):
                                 self.updatePanel(root, win, panel)    
                 elif e.type == X.Expose and e.count == 0:
                     if e.width == P_WIDTH:
-                        win.change_property(self._DESKTOP, Xatom.CARDINAL, 32, [0xffffffffL])
+                        win.change_property(self._DESKTOP, Xatom.CARDINAL, 32, [0xffffffff])
                         self.sendEvent(win, self._STATE, [1, self._STICKY])
                         self.sendEvent(win, self._STATE, [1, self._SKIP_PAGER])
                         self.sendEvent(win, self._STATE, [1, self._SKIP_TASKBAR])
@@ -894,7 +894,7 @@ from Xlib import X, display, error, Xatom, Xutil
 import Xlib.protocol.event
 import locale, os, pwd, select, sys, time
 
-# New default config options which may not exist in ~/.pypanelrc if upgrading
+# New default config options which may not exist in ~/.config/pypanel/config if upgrading
 # v2.2
 HIDDEN_SIZE   = 2   
 SHOWBORDER    = 0 
@@ -924,19 +924,19 @@ if __name__ == "__main__":
         home = pwd.getpwuid(os.getuid())[5]
         if os.access("/etc/pypanelrc", os.F_OK|os.R_OK):
             src = "/etc/pypanelrc"
-            execfile(src)
-        if not os.access("%s/.pypanelrc" % home, os.F_OK|os.R_OK):
-            # Create ~/.pypanelrc from /etc/pypanelrc if it exists else
+            exec(compile(open(src, "rb").read(), src, 'exec'))
+        if not os.access("%s/.config/pypanel/config" % home, os.F_OK|os.R_OK):
+            # Create ~/.config/pypanel/config from /etc/pypanelrc if it exists else
             # create it from /<pythonlib>/site-packages/pypanel/pypanelrc
             import shutil
             if not src:
                 src = "%s/pypanel/pypanelrc" % sysconfig.get_python_lib()
-            dst = "%s/.pypanelrc" % home
+            dst = "%s/.config/pypanel/config" % home
             shutil.copyfile(src, dst)
-        execfile("%s/.pypanelrc" % home)
+        exec(compile(open("%s/.config/pypanel/config" % home, "rb").read(), "%s/.config/pypanel/config" % home, 'exec'))
         del src, dst, home
-    except StandardError, e:
-        sys.stderr.write("\nFailed to open ~/.pypanelrc -\n\n")
+    except Exception as e:
+        sys.stderr.write("\nFailed to open ~/.config/pypanel/config -\n\n")
         sys.stderr.write(str(e)+"\n\n")
         sys.exit()
         
@@ -955,3 +955,5 @@ if __name__ == "__main__":
     del main, config
 
     PyPanel(display.Display())
+
+         
