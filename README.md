@@ -1,7 +1,6 @@
-_* this project has been copied from its original home at SourceForge for posterity's sake._
+_* this project has been ported to Python 3 from the original project by Jon Gelo.
 
-
-## PyPanel v2.4 Copyright (c) 2003-2005 Jon Gelo (jongelo@gmail.com)
+## PyPanel v3.0 Copyright (c) 2003-2005 Jon Gelo (jongelo@gmail.com), 2020 Spaceille.
 #### Distributed under the GNU General Public License v2, see COPYING for details.
 
 PyPanel is a lightweight panel/taskbar written in Python and C for X11 window
@@ -27,8 +26,8 @@ no syntax errors or the panel will not start!
 -------------------------------------------------------------------------------
                         Requirements (Minimum versions)
 -------------------------------------------------------------------------------
-1. Python v2.2                  http://www.python.org
-2. Python X Library v0.12       http://python-xlib.sourceforge.net
+1. Python v3.7                  http://www.python.org
+2. Python X Library v0.15       http://python-xlib.sourceforge.net
 3. Imlib2 v1.1.1                http://www.enlightenment.org/pages/imlib2.html
 4. libXft v1.0 (optional)       http://fontconfig.org
 
@@ -37,14 +36,9 @@ no syntax errors or the panel will not start!
 -------------------------------------------------------------------------------
 1. python setup.py install
 2. pypanel &
-3. If upgrading to 2.x from 1.3, you will need to replace your current 
-   ~/.pypanelrc with the new version:
- 
-   a. Move your current ~/.pypanelrc to a backup location or backup name
-   b. Start PyPanel so a new ~/.pypanelrc is created
-   c. Kill the panel process
-   d. Merge any changes you wish to keep from your backup config to the
-      new version
+3. If upgrading to 3.x from 2.4, you will need to move your current 
+   ~/.pypanelrc to ~/.config/pypanel/config
+
 
 -------------------------------------------------------------------------------
                                 Uninstallation
@@ -54,12 +48,12 @@ PyPanel installs the following files -
 1. /usr/bin/pypanel (may be in /usr/local/bin or other depending on system)
 2. <path to your Python library>/site-packages/ppmodule.so (.sl)
 3. <path to your Python library>/site-packages/pypanel/
-4. ~/.pypanelrc
+4. ~/.config/pypanel/config
 
 -------------------------------------------------------------------------------
                                  Configuration
 -------------------------------------------------------------------------------
-1. Configuration is handled via the ~/.pypanelrc python script, it's
+1. Configuration is handled via the ~/.config/pypanel/config python script, it's
    executed when PyPanel is started.
 2. If the level of customization from the config script isn't enough, hack
    the PyPanel script itself.
@@ -85,6 +79,9 @@ PyPanel installs the following files -
 -------------------------------------------------------------------------------
                                     History
 -------------------------------------------------------------------------------
+v3.0:
+   Port to Python 3.
+
 +  050626 v2.4 -   
   + New features:
     + Shadowed text
